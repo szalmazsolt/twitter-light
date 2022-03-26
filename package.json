@@ -25,7 +25,8 @@
   "homepage": "https://github.com/szalmazsolt/twitter-light#readme",
   "dependencies": {
     "ejs": "^3.1.6",
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "lokijs": "^1.5.12"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

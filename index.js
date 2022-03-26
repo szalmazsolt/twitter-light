@@ -2,6 +2,9 @@ const path = require('path');
 
 const express = require('express');
 
+const initializeDB = require('./services/db');
+const { start } = require('repl');
+
 const app = express();
 
 // Setting up static assets middleware for route '/static'
@@ -14,7 +17,7 @@ const port = 5000;
 const host = '127.0.0.1'
 
 app.get('/', (req, res, next) => {
-  res.send('The root route');
+  res.redirect('/tweets');
 });
 
 // TWEET ROUTES
@@ -73,8 +76,14 @@ app.delete('/tweets/:id', (req, res, next) => {
   res.send('Deleting a specific tweet');
 });
 
+initializeDB((err, result) => {
+  if (err) {
+    return console.log('Database initialization failed. Server won\'t start.');
+  }
 
-
-app.listen(port, host, () => {
-  console.log(`Server is listening on PORT ${port}...`)
-})
+  console.log('Sucessfully initialized database.')
+  
+  app.listen(port, host, () => {
+    console.log(`Server is listening on PORT ${port}...`)
+  })
+});
