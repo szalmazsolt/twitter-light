@@ -1,2 +1,4 @@
 /node_modules
 /services/db/data.db
+.DS_Store
+/services/.DS_Store

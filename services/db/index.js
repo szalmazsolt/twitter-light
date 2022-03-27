@@ -11,16 +11,13 @@ const initializeDB = (cb) => {
     }
     
     let tweetModel = db.getCollection('tweets');
-    if (!tweetModel) {
+    if (tweetModel === null) {
       tweetModel = db.addCollection('tweets');
     }
-  
+
     db.saveDatabase(err => {
-      if (err) {
-        return cb(err);
-      }
-      
-      cb(undefined, { tweetModel })
+      console.log('DB saved')
+      cb(err, { tweetModel, db })
     });
   });
 };

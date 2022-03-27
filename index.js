@@ -3,7 +3,7 @@ const path = require('path');
 const express = require('express');
 
 const initializeDB = require('./services/db');
-const { start } = require('repl');
+const seeder = require('./services/db/seed')
 
 const app = express();
 
@@ -16,6 +16,12 @@ app.use(express.urlencoded({ extended: false }));
 const port = 5000;
 const host = '127.0.0.1'
 
+const objectRepo = {
+  db: null,
+  tweetModel: null,
+  userModel: null,
+};
+
 app.get('/', (req, res, next) => {
   res.redirect('/tweets');
 });
@@ -25,7 +31,9 @@ app.get('/', (req, res, next) => {
 app.get('/tweets', (req, res, next) => {
   // fetch all tweets from DB and order by created_at desc
   // render list of tweets
-  res.send('Listing all tweets from users');
+  const tweets = objectRepo.tweetModel.find()
+  // console.log(tweets);
+  res.json(tweets);
 });
 
 app.get('/tweets/new', (req, res, next) => {
@@ -76,12 +84,17 @@ app.delete('/tweets/:id', (req, res, next) => {
   res.send('Deleting a specific tweet');
 });
 
-initializeDB((err, result) => {
+initializeDB((err, { db, tweetModel }) => {
   if (err) {
     return console.log('Database initialization failed. Server won\'t start.');
+    
   }
-
-  console.log('Sucessfully initialized database.')
+  objectRepo.db = db;
+  objectRepo.tweetModel = tweetModel;
+  console.log('Sucessfully initialized database.');
+  const seedDB = seeder(objectRepo, 'tweet');
+  seedDB();
+  
   
   app.listen(port, host, () => {
     console.log(`Server is listening on PORT ${port}...`)
