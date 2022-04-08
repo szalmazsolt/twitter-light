@@ -1,14 +1,21 @@
 const path = require('path');
 const express = require('express');
 const initializeDB = require('./services/db');
+const createRouter = require('./routes');
 
 const app = express();
+
+app.set('views', path.resolve(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 // Setting up static assets middleware for route '/static'
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 // Setting up body parser middleware for accessing data submitted via forms
 app.use(express.urlencoded({ extended: false }));
+
+// body parser for json data
+app.use(express.json());
 
 const port = 5000;
 const host = '127.0.0.1'
@@ -19,67 +26,7 @@ const objectRepo = {
   userModel: null,
 };
 
-app.get('/', (req, res, next) => {
-  res.redirect('/tweets');
-});
 
-// TWEET ROUTES
-// index
-app.get('/tweets', (req, res, next) => {
-  // fetch all tweets from DB and order by created_at desc
-  // render list of tweets
-  const tweets = objectRepo.tweetModel.find()
-  // console.log(tweets);
-  res.json(tweets);
-});
-
-app.get('/tweets/new', (req, res, next) => {
-  // render an empty form to create a new tweet
-  res.send('Create tweet form');
-});
-
-// create
-app.post('/tweets', (req, res, next) => {
-  // check if tweet is valid
-    // if not render form again with error message
-  // save tweet in DB
-  // save tweet on res.locals
-  // redirect to index
-  res.send('Creating a new tweet');
-});
-
-// show
-app.get('/tweets/:id', (req, res, next) => {
-  // fetch tweet from DB by id
-    // if there is no tweet, send 404 status and message
-  // render show template
-  res.send('Fetching a specific tweet');
-});
-
-app.get('/tweets/:id/edit', (req, res, next) => {
-  // fecth tweet from DB by id
-    // if there is no tweet, send 404 status and message
-  // place tweet on res.locals
-  // render a form prepopulated by the tweet data
-  res.send('Edit tweet form');
-});
-
-// update
-app.patch('/tweets/:id', (req, res, next) => {
-  // check if tweet is valid
-    // if not render form again with error message
-  // save tweet in DB
-  // save tweet on res.locals
-  // redirect to show
-  res.send('Updating a specific tweet');
-});
-
-// delete
-app.delete('/tweets/:id', (req, res, next) => {
-  // delete tweet from DB
-  // redirect to index
-  res.send('Deleting a specific tweet');
-});
 
 initializeDB((err, { db, tweetModel }) => {
   if (err) {
@@ -89,9 +36,14 @@ initializeDB((err, { db, tweetModel }) => {
   objectRepo.db = db;
   objectRepo.tweetModel = tweetModel;
   console.log('Sucessfully initialized database.');
+
+  const mountRoutes = createRouter(objectRepo);
+  app.use(mountRoutes());
   
   
   app.listen(port, host, () => {
     console.log(`Server is listening on PORT ${port}...`)
   })
 });
+
+module.exports = objectRepo;
