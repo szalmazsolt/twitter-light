@@ -1,9 +1,6 @@
 const path = require('path');
-
 const express = require('express');
-
 const initializeDB = require('./services/db');
-const seeder = require('./services/db/seed')
 
 const app = express();
 
@@ -92,8 +89,6 @@ initializeDB((err, { db, tweetModel }) => {
   objectRepo.db = db;
   objectRepo.tweetModel = tweetModel;
   console.log('Sucessfully initialized database.');
-  const seedDB = seeder(objectRepo, 'tweet');
-  seedDB();
   
   
   app.listen(port, host, () => {

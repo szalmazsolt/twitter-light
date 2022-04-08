@@ -16,7 +16,7 @@ const initializeDB = (cb) => {
     }
 
     db.saveDatabase(err => {
-      console.log('DB saved')
+      // console.log('DB saved')
       cb(err, { tweetModel, db })
     });
   });
