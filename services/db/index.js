@@ -9,15 +9,39 @@ const initializeDB = (cb) => {
     if (err) {
       return cb(err);
     }
+
+    // Tweet model
+      // id:String
+      // text:String
+      // createdAt:Date
+      // updatedAt:Date
+      // user: userId
     
     let tweetModel = db.getCollection('tweets');
     if (tweetModel === null) {
-      tweetModel = db.addCollection('tweets');
+      tweetModel = db.addCollection('tweets', {
+        indices: ['id']
+      });
+    }
+
+    // User Model
+      // id:String
+      // username:String
+      // email:String
+      // password:String/Hash
+      // createdAt:Date
+
+    let userModel = db.getCollection('users');
+    if (userModel === null) {
+      userModel = db.addCollection('users', {
+        unique: ['email'],
+        indices: ['id', 'email']
+      })
     }
 
     db.saveDatabase(err => {
       // console.log('DB saved')
-      cb(err, { tweetModel, db })
+      cb(err, { db, tweetModel, userModel })
     });
   });
 };

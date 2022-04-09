@@ -1,5 +1,8 @@
 const path = require('path');
 const express = require('express');
+const session = require('express-session');
+const { v4: uuidv4 } = require('uuid')
+
 const initializeDB = require('./services/db');
 const createRouter = require('./routes');
 
@@ -20,21 +23,32 @@ app.use(express.json());
 const port = 5000;
 const host = '127.0.0.1'
 
+app.use(session({
+  secret: 'ug8zgGUZG(=LKU2+"njnjkLOG/.!',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+  })
+);
+
+
 const objectRepo = {
   db: null,
   tweetModel: null,
   userModel: null,
+  uuidv4,
 };
 
 
 
-initializeDB((err, { db, tweetModel }) => {
+initializeDB((err, { db, tweetModel, userModel }) => {
   if (err) {
     return console.log('Database initialization failed. Server won\'t start.');
     
   }
   objectRepo.db = db;
   objectRepo.tweetModel = tweetModel;
+  objectRepo.userModel = userModel;
   console.log('Sucessfully initialized database.');
 
   const mountRoutes = createRouter(objectRepo);

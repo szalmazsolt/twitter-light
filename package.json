@@ -26,6 +26,7 @@
   "dependencies": {
     "ejs": "^3.1.6",
     "express": "^4.17.3",
+    "express-session": "^1.17.2",
     "lokijs": "^1.5.12",
     "uuid": "^8.3.2"
   },
