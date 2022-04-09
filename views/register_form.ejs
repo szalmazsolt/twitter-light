@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+</head>
+<body>
+  
+  <form action="/users" method="POST">
+
+    <label for="username">Username:</label>
+    <input type="text" name="username" id="username" value="<%= typeof username !== 'undefined' ? username : ''  %>">
+    <div>
+      <%= errorMessages.username %>
+    </div>
+
+    <label for="email">Email:</label>
+    <input type="text" name="email" id="email" value="<%= typeof email !== 'undefined' ? email : '' %>">
+    <div>
+      <%= errorMessages.email %>
+    </div>
+
+    <label for="password">Password:</label>
+    <input type="text" name="password" id="password" value="">
+    <div>
+      <%= errorMessages.password %>
+    </div>
+
+    <label for="password_confirmation">Re-type password:</label>
+    <input type="text" name="password_confirmation" id="password_confirmation" value="">
+    <div>
+      <%= errorMessages.password %>
+    </div>
+
+    <button>Register</button>
+  </form>
+
+</body>
+</html>

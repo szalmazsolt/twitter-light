@@ -4,16 +4,30 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All tweets</title>
+  <title>Welcome | Twitter Light</title>
 </head>
 <body>
-  <h1>Listing all tweets</h1>
-  <% tweets.forEach(tweet => { %>
+  <h1>Welcome to Twitter Light</h1>
+
+  <% if (currentUser) { %>
+    
+    <p>Current user is <%= currentUser.username %></p>
+    <a href="/logout">Logout</a>
+
+
+    <p><a href="/tweets/new">Start tweeting</a></p>
+
+  <% } else { %>
+    <a href="/users/new">Register new user</a>
+    <a href="/login">Login here</a>
+  <% }%>
+
+
+  <p>There are <%= users.length %> users.</p>
+  
+  <% users.forEach(user => { %>
     <p>
-      <%= tweet.text %>
-      <a href="/tweets/<%= tweet.id %>">Show</a>
-      <a href="/tweets/<%= tweet.id %>">Edit</a>
-      <a href="/tweets/<%= tweet.id %>">Delete</a>
+      <a href="/users/<%= user.id %>"><%= user.username %></a>
     </p>
   <% }) %>
 </body>

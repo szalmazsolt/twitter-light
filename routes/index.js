@@ -5,10 +5,12 @@ const createRouter = (objRepo) => {
   const { tweetModel, userModel, uuidv4, db } = objRepo 
 
   return () => {
-    console.log('router runs...')
     router.get('/', (req, res, next) => {
-      // render home page here
-      res.redirect('/tweets');
+      const users = userModel.find()
+      console.log('req.session:', req.session)
+      const currentUser = userModel.findOne({ id: req.session.userId })
+      res.locals = { users, currentUser}
+      res.render('index', res.locals);
     });
     
     // TWEET ROUTES
@@ -18,33 +20,81 @@ const createRouter = (objRepo) => {
       // render list of tweets
       const tweets = tweetModel.find()
       
-      // res.locals.tweets = tweets[0].tweets;
-      res.json(tweets);
-      // res.render('index', res.locals)
+      console.log(tweets)
+
+
+      // const tweetsWithUsers = tweets.map(tweet => {
+      //   const user = userModel.findOne({ id: tweet.userId });
+      //   return {...tweet, user: user.username}
+      // });
+
+      // console.log(tweetsWithUsers);
+
+      res.locals.tweets = tweets;
+      // // res.locals.tweets = tweets[0].tweets;
+      res.render('tweets', res.locals);
+      // // res.render('index', res.locals)
     });
     
     router.get('/tweets/new', (req, res, next) => {
+      console.log(req.session)
       // render an empty form to create a new tweet
-      res.send('Create tweet form');
+      res.render('tweet_form');
     });
     
     // create
     router.post('/tweets', (req, res, next) => {
+
+      console.log(req.body)
+      const tweet = req.body.tweet.trim();
+      console.log(tweet);
+      console.log(req.session)
+      console.log(req.session.userId)
       // check if tweet is valid
         // if not render form again with error message
+
+      const user = userModel.findOne({id: req.session.userId})
+      
       // create new tweet object
-      // save tweet in DB
-      // save tweet on res.locals
-      // redirect to index
-      res.send('Creating a new tweet');
+      const newTweet = {
+        id: uuidv4(),
+        text: tweet,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        user: user
+      };
+
+      console.log(newTweet)
+
+      // // save tweet in DB
+      tweetModel.insert(newTweet)
+
+      db.saveDatabase(err => {
+        if (err) {
+          return res.status(500).send('Unable to save data to DB');
+        }
+
+        res.redirect('/tweets')
+      });
+
+
+      // // save tweet on res.locals
+      // // redirect to index
+      // // res.redirect('/');
     });
     
     // show
     router.get('/tweets/:id', (req, res, next) => {
       // fetch tweet from DB by id
+      const tweet = tweetModel.findOne({ id: req.params.id })
         // if there is no tweet, send 404 status and message
+      if (tweet === null) {
+        return res.status(404).send('Tweet is not found')
+      }
+
+      res.locals.tweet = tweet;
       // render show template
-      res.send('Fetching a specific tweet');
+      res.render('show_tweet', res.locals);
     });
     
     router.get('/tweets/:id/edit', (req, res, next) => {
@@ -82,7 +132,13 @@ const createRouter = (objRepo) => {
     });
 
     router.get('/users/new', (req, res, next) => {
-      res.send('New user form');
+      const errorMessages = {
+        username: '',
+        email: '',
+        password: ''
+      };
+
+      res.render('register_form', { errorMessages });
     });
 
     router.post('/users', (req, res, next) => {
@@ -105,7 +161,7 @@ const createRouter = (objRepo) => {
 
       !username ? errorMessages.username = 'username cannot be blank' : ''
       !email ? errorMessages.email = 'email cannot be blank' : ''
-      !password ? errorMessages.password = 'username cannot be blank' : ''
+      !password ? errorMessages.password = 'password cannot be blank' : ''
       password !== password_confirmation ? errorMessages.password = 'passwords do not match' : ''
       
 
@@ -118,9 +174,15 @@ const createRouter = (objRepo) => {
       });
 
       console.log(isValidUserData);
+      console.log(username, email)
 
       if (!isValidUserData) {
-        return res.status(400).send(errorMessages);
+        res.locals.errorMessages = errorMessages
+        res.locals.username = username
+        res.locals.email = email
+
+
+        return res.render('register_form', res.locals);
       }
 
 
@@ -143,7 +205,7 @@ const createRouter = (objRepo) => {
         req.session.userId = user.id;
         console.log(req.session);
 
-        res.status(201).send(user);     
+        res.redirect('/');     
 
       });
 
@@ -174,6 +236,29 @@ const createRouter = (objRepo) => {
         return res.send('User is deleted')
       });
 
+    });
+
+    router.get('/login', (req, res, next) => {
+      res.render('login_form')
+    });
+
+    router.post('/login', (req, res, next) => {
+      const user = userModel.findOne({ email: req.body.email })
+
+      if (user === null || user.password !== req.body.password) {
+        return res.status(400).send('Invalid credentials');
+      }
+
+      req.session.userId = user.id;
+      res.redirect('/')
+    });
+
+    router.get('/logout', (req, res, next) => {
+      console.log(req.session)
+
+      req.session.userId = null;
+
+      res.redirect('/');
     });
   
     return router;
