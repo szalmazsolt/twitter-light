@@ -8,6 +8,7 @@ const initializeDB = require('./services/db');
 const createRouter = require('./routes');
 
 const app = express();
+const router = new express.Router();
 
 app.set('views', path.resolve(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 // body parser for json data
 app.use(express.json());
 
+// to use PATCH and DELETE methods in HTML forms
 app.use(methodOverride('_method'))
 
 const port = 5000;
@@ -40,13 +42,14 @@ const objectRepo = {
   tweetModel: null,
   userModel: null,
   uuidv4,
+  router
 };
 
 
 
 initializeDB((err, { db, tweetModel, userModel }) => {
   if (err) {
-    return console.log('Database initialization failed. Server won\'t start.');
+    return console.log('Database initialization failed. Webserver won\'t start.');
     
   }
   objectRepo.db = db;

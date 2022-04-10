@@ -1,199 +1,70 @@
-const express = require('express');
+const getUsersMW = require('../middlewares/getUsersMW');
+const getTweetsMW = require('../middlewares/getTweetsMW');
+const getLoggedInUserMW = require('../middlewares/getLoggedInUserMW');
+const renderMW = require('../middlewares/renderMW');
+const authMW = require('../middlewares/authMW');
+const getUserMW = require('../middlewares/getUserMW');
+const createTweetMW = require('../middlewares/createTweetMW');
+const saveDBMW = require('../middlewares/saveDBMW');
+const getTweetMW = require('../middlewares/getTweetMW');
+const correctUserMW = require('../middlewares/correctUserMW');
+const updateTweetMW = require('../middlewares/updateTweetMW');
+const deleteTweetMW = require('../middlewares/deleteTweetMW');
 
 const createRouter = (objRepo) => {
-  const router = new express.Router();
-  const { tweetModel, userModel, uuidv4, db } = objRepo 
+  
+  const { userModel, db, router } = objRepo 
 
   return () => {
-    router.get('/', (req, res, next) => {
-      const users = userModel.find()
-      
-      // chaining methods on Loki models
-        // we must start with chain()
-        // simplesort(property, isDesc)
-        // chain return a ResultSet, so we need to use data() to turn it into an array
-      const tweets = tweetModel
-        .chain()
-        .find()
-        .simplesort('createdAt', true)
-        .data();
+    // Home route
+    router.get('/', 
+      getUsersMW(objRepo),
+      getTweetsMW(objRepo),
+      getLoggedInUserMW(objRepo),
+      renderMW('index')
+    );
 
-      console.log('Tweets:', tweets)
-      console.log('req.session:', req.session)
-      const currentUser = userModel.findOne({ id: req.session.userId })
-      console.log('currentUser: ', currentUser);
-      res.locals = { users, tweets, currentUser}
-      res.render('index', res.locals);
+    // New tweet
+    router.get('/tweets/new',
+      authMW(),
+      renderMW('tweet_form')
+    );
+    
+    // Create tweet
+    router.post('/tweets',
+      getUserMW(objRepo),
+      createTweetMW(objRepo),
+      saveDBMW(objRepo),
+      (req, res, next) => {
+        res.redirect('/');
     });
     
-    // TWEET ROUTES
-    // index
-    router.get('/tweets', (req, res, next) => {
-      // fetch all tweets from DB and order by created_at desc
-      // render list of tweets
-      let tweets = tweetModel
-        .chain()
-        .find()
-        .simplesort('createdAt', true)
-        .data();
-
-      console.log(tweets)
-
-
-      // const tweetsWithUsers = tweets.map(tweet => {
-      //   const user = userModel.findOne({ id: tweet.userId });
-      //   return {...tweet, user: user.username}
-      // });
-
-      // console.log(tweetsWithUsers);
-
-      res.locals.tweets = tweets;
-      // // res.locals.tweets = tweets[0].tweets;
-      res.render('tweets', res.locals);
-      // // res.render('index', res.locals)
-    });
+    // Edit tweet
+    router.get('/tweets/:id/edit',
+      getTweetMW(objRepo),
+      correctUserMW(),
+      renderMW('edit_tweet_form')
+    );
     
-    router.get('/tweets/new', (req, res, next) => {
-      if (typeof req.session.userId === 'undefined') {
-        return res.status(401).send('Unauthorized');
-      }
-      console.log(typeof req.session.userId)
-      // render an empty form to create a new tweet
-      res.render('tweet_form');
-    });
-    
-    // create
-    router.post('/tweets', (req, res, next) => {
-
-      console.log(req.body)
-      const tweet = req.body.tweet.trim();
-      console.log(tweet);
-      console.log(req.session)
-      console.log(req.session.userId)
-      // check if tweet is valid
-        // if not render form again with error message
-
-      const user = userModel.findOne({id: req.session.userId})
-      
-      // create new tweet object
-      const newTweet = {
-        id: uuidv4(),
-        text: tweet,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        user: {
-          id: user.id,
-          username: user.username,
-        }
-      };
-
-      console.log(newTweet)
-
-      // // save tweet in DB
-      tweetModel.insert(newTweet)
-
-      db.saveDatabase(err => {
-        if (err) {
-          return res.status(500).send('Unable to save data to DB');
-        }
-
-        res.redirect('/')
+    // Update tweet
+    router.patch('/tweets/:id',
+      getTweetMW(objRepo),
+      correctUserMW(),
+      updateTweetMW(objRepo),
+      saveDBMW(objRepo),
+      (req, res, next) => {
+        res.redirect('/');
       });
-
-    });
     
-    // show
-    // router.get('/tweets/:id', (req, res, next) => {
-    //   // fetch tweet from DB by id
-    //   const tweet = tweetModel.findOne({ id: req.params.id })
-    //     // if there is no tweet, send 404 status and message
-    //   if (tweet === null) {
-    //     return res.status(404).send('Tweet is not found')
-    //   }
-
-    //   res.locals.tweet = tweet;
-    //   // render show template
-    //   res.render('show_tweet', res.locals);
-    // });
-    
-    router.get('/tweets/:id/edit', (req, res, next) => {
-      const tweet = tweetModel.findOne({ id: req.params.id })
-
-      if (req.session.userId !== tweet.user.id) {
-        return res.status(401).send('Unauthorized action');
-      }
-      // console.log(tweet.user.id)
-
-      // fecth tweet from DB by id
-        // if there is no tweet, send 404 status and message
-
-      if (tweet === null) {
-        return res.status(404).send('Tweet not found');
-      }
-      // place tweet on res.locals
-      res.locals.tweet = tweet;
-      // res.locals.isSameUser = isSameUser;
-      // render a form prepopulated by the tweet data
-      res.render('edit_tweet_form', res.locals);
-    });
-    
-    // update
-    router.patch('/tweets/:id', (req, res, next) => {
-      // check if tweet is valid
-        // if not render form again with error message
-      // save tweet in DB
-      const tweet = tweetModel.findOne({ id: req.params.id })
-
-      if (tweet === null) {
-        return res.status(404).send('Tweet not found')
-      }
-
-      if (req.session.userId !== tweet.user.id) {
-        return res.status(401).send('Unauthorized action');
-      }
-      
-
-
-      console.log(tweet)
-
-      tweet.text = req.body.text;
-
-      tweetModel.update(tweet)
-
-      db.saveDatabase(err => {
-        if (err) {
-          return res.status(500).send('Could not save data')
-        }
-
-        res.redirect('/')
+    // Delete tweet
+    router.delete('/tweets/:id', 
+      getTweetMW(objRepo),
+      correctUserMW(),
+      deleteTweetMW(objRepo),
+      saveDBMW(objRepo),
+      (req, res, next) => {
+        res.redirect('/');
       });
-
-    });
-    
-    // delete
-    router.delete('/tweets/:id', (req, res, next) => {
-
-      const tweet = tweetModel.findOne({ id: req.params.id });
-
-      if (tweet === null) {
-        return res.status(404).send('Could not find tweet')
-      }
-
-      if (req.session.userId !== tweet.user.id) {
-        return res.status(401).send('Unauthorized action');
-      }
-
-      tweetModel.remove(tweet)
-
-      db.saveDatabase(err => {
-        if (err) {
-          return res.status(500).send('Could not save data')
-        }
-
-        res.redirect('/')
-      });
-
-    });
 
 
     // USER Routes

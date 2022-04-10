@@ -9,12 +9,12 @@
 <body>
   <h1>Welcome to Twitter Light</h1>
 
-  <% if (!currentUser) { %>
+  <% if (!loggedInUser) { %>
     <a href="/users/new">Register new user</a>
     <a href="/login">Login here</a>
 
   <% } else { %>
-    <p>Current user is <%= currentUser.username %></p>
+    <p>Current user is <%= loggedInUser.username %></p>
     <a href="/logout">Logout</a>
     <p><a href="/tweets/new">Start tweeting</a></p>
   <% } %>
@@ -37,7 +37,7 @@
       Posted on: <%= new Date (tweet.createdAt).toLocaleString("hu-HU") %>
     </p>
 
-    <% if (currentUser && currentUser.id === tweet.user.id) { %>
+    <% if (loggedInUser && loggedInUser.id === tweet.user.id) { %>
       <a href="/tweets/<%= tweet.id %>/edit">Edit</a>
       <form action="/tweets/<%= tweet.id %>?_method=DELETE" method="POST">
         <input type="submit" value="Delete" />
