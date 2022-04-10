@@ -28,6 +28,7 @@
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "lokijs": "^1.5.12",
+    "method-override": "^3.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

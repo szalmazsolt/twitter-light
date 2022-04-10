@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const { v4: uuidv4 } = require('uuid')
+const methodOverride = require('method-override');
 
 const initializeDB = require('./services/db');
 const createRouter = require('./routes');
@@ -19,6 +20,8 @@ app.use(express.urlencoded({ extended: false }));
 
 // body parser for json data
 app.use(express.json());
+
+app.use(methodOverride('_method'))
 
 const port = 5000;
 const host = '127.0.0.1'

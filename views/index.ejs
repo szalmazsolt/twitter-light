@@ -9,18 +9,15 @@
 <body>
   <h1>Welcome to Twitter Light</h1>
 
-  <% if (currentUser) { %>
-    
-    <p>Current user is <%= currentUser.username %></p>
-    <a href="/logout">Logout</a>
-
-
-    <p><a href="/tweets/new">Start tweeting</a></p>
-
-  <% } else { %>
+  <% if (!currentUser) { %>
     <a href="/users/new">Register new user</a>
     <a href="/login">Login here</a>
-  <% }%>
+
+  <% } else { %>
+    <p>Current user is <%= currentUser.username %></p>
+    <a href="/logout">Logout</a>
+    <p><a href="/tweets/new">Start tweeting</a></p>
+  <% } %>
 
 
   <p>There are <%= users.length %> users.</p>
@@ -30,5 +27,23 @@
       <a href="/users/<%= user.id %>"><%= user.username %></a>
     </p>
   <% }) %>
+
+  <p>There are <%= tweets.length %> tweets</p>
+  
+  <% tweets.forEach(tweet => { %>
+    <p>
+      <%= tweet.user.username %>:
+      <%= tweet.text %>
+    </p>
+
+    <% if (currentUser && currentUser.id === tweet.user.id) { %>
+      <a href="/tweets/<%= tweet.id %>/edit">Edit</a>
+      <form action="/tweets/<%= tweet.id %>?_method=DELETE" method="POST">
+        <input type="submit" value="Delete" />
+      </form>
+    <% } %>
+
+  <% }) %>
+
 </body>
 </html>

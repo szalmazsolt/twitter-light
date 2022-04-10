@@ -7,9 +7,12 @@ const createRouter = (objRepo) => {
   return () => {
     router.get('/', (req, res, next) => {
       const users = userModel.find()
+      const tweets = tweetModel.find()
+      console.log('Tweets:', tweets)
       console.log('req.session:', req.session)
       const currentUser = userModel.findOne({ id: req.session.userId })
-      res.locals = { users, currentUser}
+      console.log('currentUser: ', currentUser);
+      res.locals = { users, tweets, currentUser}
       res.render('index', res.locals);
     });
     
@@ -37,7 +40,10 @@ const createRouter = (objRepo) => {
     });
     
     router.get('/tweets/new', (req, res, next) => {
-      console.log(req.session)
+      if (typeof req.session.userId === 'undefined') {
+        return res.status(401).send('Unauthorized');
+      }
+      console.log(typeof req.session.userId)
       // render an empty form to create a new tweet
       res.render('tweet_form');
     });
@@ -61,7 +67,10 @@ const createRouter = (objRepo) => {
         text: tweet,
         createdAt: new Date(),
         updatedAt: new Date(),
-        user: user
+        user: {
+          id: user.id,
+          username: user.username,
+        }
       };
 
       console.log(newTweet)
@@ -74,35 +83,44 @@ const createRouter = (objRepo) => {
           return res.status(500).send('Unable to save data to DB');
         }
 
-        res.redirect('/tweets')
+        res.redirect('/')
       });
 
-
-      // // save tweet on res.locals
-      // // redirect to index
-      // // res.redirect('/');
     });
     
     // show
-    router.get('/tweets/:id', (req, res, next) => {
-      // fetch tweet from DB by id
-      const tweet = tweetModel.findOne({ id: req.params.id })
-        // if there is no tweet, send 404 status and message
-      if (tweet === null) {
-        return res.status(404).send('Tweet is not found')
-      }
+    // router.get('/tweets/:id', (req, res, next) => {
+    //   // fetch tweet from DB by id
+    //   const tweet = tweetModel.findOne({ id: req.params.id })
+    //     // if there is no tweet, send 404 status and message
+    //   if (tweet === null) {
+    //     return res.status(404).send('Tweet is not found')
+    //   }
 
-      res.locals.tweet = tweet;
-      // render show template
-      res.render('show_tweet', res.locals);
-    });
+    //   res.locals.tweet = tweet;
+    //   // render show template
+    //   res.render('show_tweet', res.locals);
+    // });
     
     router.get('/tweets/:id/edit', (req, res, next) => {
+      const tweet = tweetModel.findOne({ id: req.params.id })
+
+      if (req.session.userId !== tweet.user.id) {
+        return res.status(401).send('Unauthorized action');
+      }
+      // console.log(tweet.user.id)
+
       // fecth tweet from DB by id
         // if there is no tweet, send 404 status and message
+
+      if (tweet === null) {
+        return res.status(404).send('Tweet not found');
+      }
       // place tweet on res.locals
+      res.locals.tweet = tweet;
+      // res.locals.isSameUser = isSameUser;
       // render a form prepopulated by the tweet data
-      res.send('Edit tweet form');
+      res.render('edit_tweet_form', res.locals);
     });
     
     // update
@@ -110,18 +128,57 @@ const createRouter = (objRepo) => {
       // check if tweet is valid
         // if not render form again with error message
       // save tweet in DB
-      // save tweet on res.locals
-      // redirect to show
-      res.send('Updating a specific tweet');
+      const tweet = tweetModel.findOne({ id: req.params.id })
+
+      if (tweet === null) {
+        return res.status(404).send('Tweet not found')
+      }
+
+      if (req.session.userId !== tweet.user.id) {
+        return res.status(401).send('Unauthorized action');
+      }
+      
+
+
+      console.log(tweet)
+
+      tweet.text = req.body.text;
+
+      tweetModel.update(tweet)
+
+      db.saveDatabase(err => {
+        if (err) {
+          return res.status(500).send('Could not save data')
+        }
+
+        res.redirect('/')
+      });
+
     });
     
     // delete
     router.delete('/tweets/:id', (req, res, next) => {
-      const tweet = tweetModel.findOne({ id: req.params.id })
-      console.log(tweet)
-      // delete tweet from DB
-      // redirect to index
-      res.send('Deleting a specific tweet');
+
+      const tweet = tweetModel.findOne({ id: req.params.id });
+
+      if (tweet === null) {
+        return res.status(404).send('Could not find tweet')
+      }
+
+      if (req.session.userId !== tweet.user.id) {
+        return res.status(401).send('Unauthorized action');
+      }
+
+      tweetModel.remove(tweet)
+
+      db.saveDatabase(err => {
+        if (err) {
+          return res.status(500).send('Could not save data')
+        }
+
+        res.redirect('/')
+      });
+
     });
 
 
@@ -194,7 +251,8 @@ const createRouter = (objRepo) => {
         password,
         createdAt: new Date()
       }
-      userModel.insert(user)
+      const createdUser = userModel.insert(user)
+      console.log(createdUser)
 
       db.saveDatabase(err => {
         if (err) {
@@ -224,17 +282,25 @@ const createRouter = (objRepo) => {
     });
 
     router.delete('/users/:id', (req, res, next) => {
-      const user = userModel.findOne({ id: req.params.id })
 
-      userModel.remove(user)
+      console.log('Delete route')
 
-      db.saveDatabase(err => {
-        if (err) {
-          return res.status(500).send('Could not delete user')
-        }
+      // const delConfirmed = prompt('Are you sure?');
 
-        return res.send('User is deleted')
-      });
+      // if (delConfirmed) {
+      //   const user = userModel.findOne({ id: req.params.id })
+
+      //   userModel.remove(user)
+  
+      //   db.saveDatabase(err => {
+      //     if (err) {
+      //       return res.status(500).send('Could not delete user')
+      //     }
+  
+      //     return res.redirect('/')
+      //   });
+      // }
+      
 
     });
 
@@ -243,10 +309,14 @@ const createRouter = (objRepo) => {
     });
 
     router.post('/login', (req, res, next) => {
-      const user = userModel.findOne({ email: req.body.email })
+      const { email } = req.body;
+      const user = userModel.findOne({ email: email })
+      
+      let error = null;
 
       if (user === null || user.password !== req.body.password) {
-        return res.status(400).send('Invalid credentials');
+        error = 'Invalid credetials';
+        return res.status(400).render('login_form', { error, email });
       }
 
       req.session.userId = user.id;

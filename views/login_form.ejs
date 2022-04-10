@@ -9,9 +9,11 @@
 <body>
   
   <form action="/login" method="POST">
-
+    <% if (typeof error !== 'undefined') { %>
+      <p><%= error %></p>
+    <% } %>
     <label for="email">Email:</label>
-    <input type="text" name="email" id="email">
+    <input type="text" name="email" id="email" value="<%= typeof email === 'undefined' ? '' : email %>">
 
     <label for="password">Password</label>
     <input type="text" name="password" id="password">
