@@ -7,7 +7,17 @@ const createRouter = (objRepo) => {
   return () => {
     router.get('/', (req, res, next) => {
       const users = userModel.find()
-      const tweets = tweetModel.find()
+      
+      // chaining methods on Loki models
+        // we must start with chain()
+        // simplesort(property, isDesc)
+        // chain return a ResultSet, so we need to use data() to turn it into an array
+      const tweets = tweetModel
+        .chain()
+        .find()
+        .simplesort('createdAt', true)
+        .data();
+
       console.log('Tweets:', tweets)
       console.log('req.session:', req.session)
       const currentUser = userModel.findOne({ id: req.session.userId })
@@ -21,8 +31,12 @@ const createRouter = (objRepo) => {
     router.get('/tweets', (req, res, next) => {
       // fetch all tweets from DB and order by created_at desc
       // render list of tweets
-      const tweets = tweetModel.find()
-      
+      let tweets = tweetModel
+        .chain()
+        .find()
+        .simplesort('createdAt', true)
+        .data();
+
       console.log(tweets)
 
 

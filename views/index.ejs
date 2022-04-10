@@ -34,6 +34,7 @@
     <p>
       <%= tweet.user.username %>:
       <%= tweet.text %>
+      Posted on: <%= new Date (tweet.createdAt).toLocaleString("hu-HU") %>
     </p>
 
     <% if (currentUser && currentUser.id === tweet.user.id) { %>
