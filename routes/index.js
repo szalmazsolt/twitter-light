@@ -14,6 +14,9 @@ const validateUserDataMW = require('../middlewares/validateUserDataMW');
 const createUserMW = require('../middlewares/createUserMW');
 const loginUserMW = require('../middlewares/loginUserMW');
 const setupSignupErrorsMW = require('../middlewares/setupSignupErrorsMW');
+const getUserByIdMW = require('../middlewares/getUserByIdMW');
+const updateUserMW = require('../middlewares/updateUserMW');
+const deleteUserMW = require('../middlewares/deleteUserMW');
 
 const createRouter = (objRepo) => {
   
@@ -93,40 +96,30 @@ const createRouter = (objRepo) => {
       }
     );
 
-    router.get('/users/:id', (req, res, next) => {
-      res.send('Fetching user by id')
-    });
+    router.get('/users/:id',
+      getUserByIdMW(objRepo),
+      renderMW('users/show')
+    );
 
-    router.get('/users/:id/edit', (req, res, next) => {
-      res.send('Edit user form')
-    });
+    router.get('/users/:id/edit',
+      getUserByIdMW(objRepo),
+      renderMW('users/edit')
+    );
 
-    router.patch('/users/:id', (req, res, next) => {
-      res.send('Updating user')
-    });
+    router.patch('/users/:id',
+      getUserByIdMW(objRepo),
+      updateUserMW(objRepo),
+      renderMW('users/show')
+    );
 
-    router.delete('/users/:id', (req, res, next) => {
-
-      console.log('Delete route')
-
-      // const delConfirmed = prompt('Are you sure?');
-
-      // if (delConfirmed) {
-      //   const user = userModel.findOne({ id: req.params.id })
-
-      //   userModel.remove(user)
-  
-      //   db.saveDatabase(err => {
-      //     if (err) {
-      //       return res.status(500).send('Could not delete user')
-      //     }
-  
-      //     return res.redirect('/')
-      //   });
-      // }
-      
-
-    });
+    router.delete('/users/:id',
+      getUserByIdMW(objRepo),
+      deleteUserMW(objRepo),
+      saveDBMW(objRepo),
+      (req, res) => {
+        res.redirect('/')
+      }
+    );
 
     router.get('/login', (req, res, next) => {
       res.render('login_form')
