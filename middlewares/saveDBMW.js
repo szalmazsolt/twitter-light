@@ -3,13 +3,15 @@ const saveDBMW = (objectRepo) => {
   const { db } = objectRepo;
 
   return (req, res, next) => {
+    console.log('SaveDBMW runs...')
 
     db.saveDatabase(err => {
       if (err) {
         return res.status(500).render('error');
       }
 
-      next();
+      console.log('Saving DB successfull...')
+      return next();
     });
   };
 
