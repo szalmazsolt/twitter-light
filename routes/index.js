@@ -18,6 +18,9 @@ const getUserByIdMW = require('../middlewares/getUserByIdMW');
 const updateUserMW = require('../middlewares/updateUserMW');
 const deleteUserMW = require('../middlewares/deleteUserMW');
 const correctUserMW = require('../middlewares/correctUserMW');
+const logoutUserMW = require('../middlewares/logoutUserMW');
+const getUserByEmailMW = require('../middlewares/getUserByEmailMW');
+const checkCredentialsMW = require('../middlewares/checkCredentialsMW');
 
 const createRouter = (objRepo) => {
   
@@ -99,7 +102,7 @@ const createRouter = (objRepo) => {
 
     router.get('/users/:id',
       getUserByIdMW(objRepo),
-      correctUserMW(),
+      correctUserMW(true),
       renderMW('users/show')
     );
 
@@ -126,32 +129,24 @@ const createRouter = (objRepo) => {
       }
     );
 
-    router.get('/login', (req, res, next) => {
-      res.render('login_form')
-    });
+    router.get('/login',
+      renderMW('login_form')
+    );
 
-    router.post('/login', (req, res, next) => {
-      const { email } = req.body;
-      const user = userModel.findOne({ email: email })
-      
-      let error = null;
+    router.post('/login',
+      getUserByEmailMW(objRepo),
+      checkCredentialsMW(),
+      loginUserMW(),
+      (req, res, next) => {
+        res.redirect('/')
+      });
 
-      if (user === null || user.password !== req.body.password) {
-        error = 'Invalid credetials';
-        return res.status(400).render('login_form', { error, email });
+    router.get('/logout',
+      logoutUserMW(),
+      (req, res) => {
+        res.redirect('/');
       }
-
-      req.session.userId = user.id;
-      res.redirect('/')
-    });
-
-    router.get('/logout', (req, res, next) => {
-      console.log(req.session)
-
-      req.session.userId = null;
-
-      res.redirect('/');
-    });
+    );
   
     return router;
   };
@@ -160,8 +155,6 @@ const createRouter = (objRepo) => {
 
   
 };
-
-
 
 
 module.exports = createRouter;

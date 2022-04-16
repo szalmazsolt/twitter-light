@@ -5,6 +5,17 @@ const createTweetMW = (objectRepo) => {
   return (req, res, next) => {
     const tweet = req.body.tweet.trim();
 
+    if (tweet.length === 0) {
+      res.locals.error = 'Tweet cannot be blank';
+    } else if (tweet.length > 144) {
+      res.locals.tweet = tweet
+      res.locals.error = 'A tweet cannot be more than 144 chars'
+    }
+
+    if (typeof res.locals.error !== 'undefined') {
+      return res.status(400).render('tweet_form', res.locals)
+    }
+
     const newTweet = {
       id: uuidv4(),
       text: tweet,
@@ -16,8 +27,7 @@ const createTweetMW = (objectRepo) => {
       }
     }
 
-    const result = tweetModel.insert(newTweet);
-    console.log('New tweet created:', result);
+    tweetModel.insert(newTweet);
 
     res.locals.newTweet = newTweet;
     next();
