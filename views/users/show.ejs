@@ -1,8 +1,28 @@
 <h1><%= user.username %>'s Profile</h1>
 
+<p>Username: <%= user.username %></p>
+
+<% if (typeof user.bio === 'undefined') { %>
+  <p>No bio for this user.</p>
+<% } else { %>
+  <p><%= user.bio %></p>
+<% } %>
+
+<h3><%= user.username %>'s tweets</h3>
+<% tweets.forEach(tweet => { %>
+  <p><%= tweet.text %></p>
+<% }) %>
+
+
+
 <% if (correctUser) { %>
-<a href="/users/<%= user.id %>/edit">Edit details</a><br>
-<form action="/users/<%= user.id %>?_method=DELETE" method="POST">
-  <button>Delete profile</button>
-</form>
+  <h2>Manage your profile</h2>
+  <form action="/users/<%= user.id %>/image" method="POST" enctype="multipart/form-data">
+    <button>Add an image</button>
+  </form>
+  <a href="/users/<%= user.id %>/bio/new">Add a short bio</a>
+  <a href="/users/<%= user.id %>/edit">Edit details</a><br>
+  <form action="/users/<%= user.id %>?_method=DELETE" method="POST">
+    <button>Delete profile</button>
+  </form>
 <% } %>

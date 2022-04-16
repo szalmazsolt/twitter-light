@@ -21,6 +21,8 @@ const correctUserMW = require('../middlewares/correctUserMW');
 const logoutUserMW = require('../middlewares/logoutUserMW');
 const getUserByEmailMW = require('../middlewares/getUserByEmailMW');
 const checkCredentialsMW = require('../middlewares/checkCredentialsMW');
+const addBioMW = require('../middlewares/addBioMW');
+const getTweetsByUserMW = require('../middlewares/getTweetsByUserMW');
 
 const createRouter = (objRepo) => {
   
@@ -103,6 +105,7 @@ const createRouter = (objRepo) => {
     router.get('/users/:id',
       getUserByIdMW(objRepo),
       correctUserMW(true),
+      getTweetsByUserMW(objRepo),
       renderMW('users/show')
     );
 
@@ -117,6 +120,21 @@ const createRouter = (objRepo) => {
       correctUserMW(),
       updateUserMW(objRepo),
       renderMW('users/show')
+    );
+
+    router.get('/users/:id/bio/new',
+      getUserByIdMW(objRepo),
+      correctUserMW(),
+      renderMW('users/bio_form')
+    );
+
+    router.post('/users/:id/bio',
+      getUserByIdMW(objRepo),
+      correctUserMW(),
+      addBioMW(objRepo),
+      (req, res) => {
+        res.redirect('/users/' + res.locals.user.id)
+      }
     );
 
     router.delete('/users/:id',
