@@ -1,7 +1,7 @@
 {
   "name": "twitter-light",
   "version": "0.1.0",
-  "description": "A very light weight Twitter clone written in Node.js",
+  "description": "A very lightweight Twitter clone written in Node.js",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
@@ -29,7 +29,8 @@
     "express-session": "^1.17.2",
     "lokijs": "^1.5.12",
     "method-override": "^3.0.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

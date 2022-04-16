@@ -7,7 +7,7 @@ const getUserMW = require('../middlewares/getUserMW');
 const createTweetMW = require('../middlewares/createTweetMW');
 const saveDBMW = require('../middlewares/saveDBMW');
 const getTweetMW = require('../middlewares/getTweetMW');
-const correctUserMW = require('../middlewares/correctUserMW');
+const correctTweetUserMW = require('../middlewares/correctTweetUserMW');
 const updateTweetMW = require('../middlewares/updateTweetMW');
 const deleteTweetMW = require('../middlewares/deleteTweetMW');
 const validateUserDataMW = require('../middlewares/validateUserDataMW');
@@ -17,6 +17,7 @@ const setupSignupErrorsMW = require('../middlewares/setupSignupErrorsMW');
 const getUserByIdMW = require('../middlewares/getUserByIdMW');
 const updateUserMW = require('../middlewares/updateUserMW');
 const deleteUserMW = require('../middlewares/deleteUserMW');
+const correctUserMW = require('../middlewares/correctUserMW');
 
 const createRouter = (objRepo) => {
   
@@ -49,14 +50,14 @@ const createRouter = (objRepo) => {
     // Edit tweet
     router.get('/tweets/:id/edit',
       getTweetMW(objRepo),
-      correctUserMW(),
+      correctTweetUserMW(),
       renderMW('edit_tweet_form')
     );
     
     // Update tweet
     router.patch('/tweets/:id',
       getTweetMW(objRepo),
-      correctUserMW(),
+      correctTweetUserMW(),
       updateTweetMW(objRepo),
       saveDBMW(objRepo),
       (req, res, next) => {
@@ -66,7 +67,7 @@ const createRouter = (objRepo) => {
     // Delete tweet
     router.delete('/tweets/:id', 
       getTweetMW(objRepo),
-      correctUserMW(),
+      correctTweetUserMW(),
       deleteTweetMW(objRepo),
       saveDBMW(objRepo),
       (req, res, next) => {
@@ -98,22 +99,26 @@ const createRouter = (objRepo) => {
 
     router.get('/users/:id',
       getUserByIdMW(objRepo),
+      correctUserMW(),
       renderMW('users/show')
     );
 
     router.get('/users/:id/edit',
       getUserByIdMW(objRepo),
+      correctUserMW(),
       renderMW('users/edit')
     );
 
     router.patch('/users/:id',
       getUserByIdMW(objRepo),
+      correctUserMW(),
       updateUserMW(objRepo),
       renderMW('users/show')
     );
 
     router.delete('/users/:id',
       getUserByIdMW(objRepo),
+      correctUserMW(),
       deleteUserMW(objRepo),
       saveDBMW(objRepo),
       (req, res) => {

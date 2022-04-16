@@ -24,7 +24,11 @@
   
   <% users.forEach(user => { %>
     <p>
-      <a href="/users/<%= user.id %>"><%= user.username %></a>
+      <% if (loggedInUser !== null) { %>
+        <a href="/users/<%= user.id %>"><%= user.username %></a>
+      <% } else { %>
+        <%= user.username %>
+      <% } %>
     </p>
   <% }) %>
 
