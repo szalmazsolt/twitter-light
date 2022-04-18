@@ -26,7 +26,7 @@ const getTweetsByUserMW = require('../middlewares/getTweetsByUserMW');
 
 const createRouter = (objRepo) => {
   
-  const { userModel, db, router } = objRepo 
+  const { router, upload } = objRepo 
 
   return () => {
     // Home route
@@ -145,6 +145,21 @@ const createRouter = (objRepo) => {
       (req, res) => {
         res.redirect('/')
       }
+    );
+
+    router.post('/users/:id/upload',
+      getUserByIdMW(objRepo),
+      upload.single('profile_img'),
+      (req, res, next) => {
+        res.locals.user.profile_img = req.file.path;
+        console.log(res.locals);
+        next();
+      },
+      // saveDBMW(objRepo),
+      (req, res, next) => {
+        res.redirect('/users/' + res.locals.user.id)
+      }
+      
     );
 
     router.get('/login',

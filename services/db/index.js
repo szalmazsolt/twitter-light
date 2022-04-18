@@ -30,6 +30,7 @@ const initializeDB = (cb) => {
       // email:String
       // password:String/Hash
       // createdAt:Date
+      // profile_img:String
 
     let userModel = db.getCollection('users');
     if (userModel === null) {

@@ -2,4 +2,4 @@
 /services/db/data.db
 .DS_Store
 /services/.DS_Store
-genChars.js
+./genChars.js

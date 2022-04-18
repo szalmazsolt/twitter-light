@@ -11,6 +11,7 @@ const getUserByIdMW = (objectRepo) => {
     }
 
     res.locals.user = user;
+    // console.log(res.locals)
     return next();
   };
 

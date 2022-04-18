@@ -1,6 +1,10 @@
 <h1><%= user.username %>'s Profile</h1>
 
-<p>Username: <%= user.username %></p>
+<% if (typeof user.profile_img !== 'undefined') { %>
+  <img src="/<%= user.profile_img %>" alt="<%= user.username %>'s profile image" width="250">
+  <p><%= user.username %></p>
+<% } %>
+
 
 <% if (typeof user.bio === 'undefined') { %>
   <p>No bio for this user.</p>
@@ -17,8 +21,9 @@
 
 <% if (correctUser) { %>
   <h2>Manage your profile</h2>
-  <form action="/users/<%= user.id %>/image" method="POST" enctype="multipart/form-data">
-    <button>Add an image</button>
+  <form action="/users/<%= user.id %>/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="profile_img" id="profile_img">
+    <input type="submit" value="Upload">
   </form>
   <a href="/users/<%= user.id %>/bio/new">Add a short bio</a>
   <a href="/users/<%= user.id %>/edit">Edit details</a><br>

@@ -9,7 +9,8 @@ const createUserMW = (objectRepo) => {
       username: res.locals.userData.username,
       email: res.locals.userData.email,
       password: res.locals.userData.password,
-      createdAt: new Date()
+      createdAt: new Date(),
+      profile_img: null
     }
 
     userModel.insert(newUser);
