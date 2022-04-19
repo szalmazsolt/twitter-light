@@ -1,0 +1,9 @@
+<%- include('../partials/header') %>
+
+<form action="/tweets" method="POST">
+  <input type="text" name="tweet" id="tweet" placeholder="What do you wanna say?" value="<%= typeof tweet !== 'undefined' ? tweet : '' %>">
+  <div><%= typeof error !== 'undefined' ? error : '' %></div>
+  <button>Go</button>
+</form>
+
+<%- include('../partials/footer') %>

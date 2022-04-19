@@ -1,0 +1,15 @@
+<%- include('../partials/header') %>
+
+<% if (tweets.length === 0) { %>
+  <p>Nobody tweeted yet.</p>
+<% } else { %>
+  <% tweets.forEach(tweet => { %>
+    <p><%= tweet.user.username %> says: <%= tweet.text %></p>
+    <a href="/tweets/<%= tweet.id %>">Show</a>
+    <a href="/tweets/<%= tweet.id %>/edit">Edit</a>
+    <a href="/tweets/<%= tweet.id %>/delete">Delete</a>
+    
+  <% }) %>
+<% } %>
+
+<%- include('../partials/footer') %>

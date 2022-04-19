@@ -1,3 +1,5 @@
+<%- include('../partials/header') %>
+
 <h1><%= user.username %>'s Profile</h1>
 
 <% if (typeof user.profile_img !== 'undefined') { %>
@@ -31,3 +33,5 @@
     <button>Delete profile</button>
   </form>
 <% } %>
+
+<%- include('../partials/footer') %>

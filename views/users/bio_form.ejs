@@ -1,6 +1,10 @@
+<%- include('../partials/header') %>
+
 <h2>Add a short bio to your profile</h2>
 
 <form action="/users/<%= user.id %>/bio" method="POST">
   <textarea name="bio" id="" cols="30" rows="10"></textarea>
   <button>Save bio</button>
 </form>
+
+<%- include('../partials/footer') %>

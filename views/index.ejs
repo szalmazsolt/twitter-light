@@ -1,54 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome | Twitter Light</title>
-</head>
-<body>
-  <h1>Welcome to Twitter Light</h1>
-
-  <% if (!loggedInUser) { %>
-    <a href="/users/new">Register new user</a>
-    <a href="/login">Login here</a>
-
-  <% } else { %>
-    <p>Current user is <%= loggedInUser.username %></p>
-    <a href="/logout">Logout</a>
-    <p><a href="/tweets/new">Start tweeting</a></p>
-  <% } %>
+<%- include('partials/header') %>
 
 
-  <p>There are <%= users.length %> users.</p>
-  
-  <% users.forEach(user => { %>
-    <p>
-      <% if (loggedInUser !== null) { %>
-        <a href="/users/<%= user.id %>"><%= user.username %></a>
-      <% } else { %>
-        <%= user.username %>
-      <% } %>
-    </p>
-  <% }) %>
+<h1>Welcome to Twitter Light</h1>
 
-  <p>There are <%= tweets.length %> tweets</p>
-  
-  <% tweets.forEach(tweet => { %>
-    <p>
-      <%= tweet.user.username %>:
-      <%= tweet.text %>
-      Posted on: <%= new Date (tweet.createdAt).toLocaleString("hu-HU") %>
-    </p>
+<% if (!loggedInUser) { %>
+  <a href="/users/new">Register new user</a>
+  <a href="/login">Login here</a>
 
-    <% if (loggedInUser && loggedInUser.id === tweet.user.id) { %>
-      <a href="/tweets/<%= tweet.id %>/edit">Edit</a>
-      <form action="/tweets/<%= tweet.id %>?_method=DELETE" method="POST">
-        <input type="submit" value="Delete" />
-      </form>
+<% } else { %>
+  <p>Current user is <%= loggedInUser.username %></p>
+  <a href="/logout">Logout</a>
+  <p><a href="/tweets/new">Start tweeting</a></p>
+<% } %>
+
+
+<p>There are <%= users.length %> users.</p>
+
+<% users.forEach(user => { %>
+  <p>
+    <% if (loggedInUser !== null) { %>
+      <a href="/users/<%= user.id %>"><%= user.username %></a>
+    <% } else { %>
+      <%= user.username %>
     <% } %>
+  </p>
+<% }) %>
 
-  <% }) %>
+<p>There are <%= tweets.length %> tweets</p>
 
-</body>
-</html>
+<% tweets.forEach(tweet => { %>
+  <p>
+    <%= tweet.user.username %>:
+    <%= tweet.text %>
+    Posted on: <%= new Date (tweet.createdAt).toLocaleString("hu-HU") %>
+  </p>
+
+  <% if (loggedInUser && loggedInUser.id === tweet.user.id) { %>
+    <a href="/tweets/<%= tweet.id %>/edit">Edit</a>
+    <form action="/tweets/<%= tweet.id %>?_method=DELETE" method="POST">
+      <input type="submit" value="Delete" />
+    </form>
+  <% } %>
+<% }) %>
+
+<%- include('partials/footer') %>
