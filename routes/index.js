@@ -23,6 +23,7 @@ const getUserByEmailMW = require('../middlewares/getUserByEmailMW');
 const checkCredentialsMW = require('../middlewares/checkCredentialsMW');
 const addBioMW = require('../middlewares/addBioMW');
 const getTweetsByUserMW = require('../middlewares/getTweetsByUserMW');
+const updateBioMW = require('../middlewares/updateBioMW');
 
 const createRouter = (objRepo) => {
   
@@ -104,34 +105,43 @@ const createRouter = (objRepo) => {
 
     router.get('/users/:id',
       getUserByIdMW(objRepo),
-      correctUserMW({ continueMwFlow: true }),
+      correctUserMW(objRepo, { continueMwFlow: true }),
       getTweetsByUserMW(objRepo),
       renderMW('users/show')
     );
 
     router.get('/users/:id/edit',
       getUserByIdMW(objRepo),
-      correctUserMW(),
+      correctUserMW(objRepo),
       renderMW('users/edit')
     );
 
     router.patch('/users/:id',
       getUserByIdMW(objRepo),
-      correctUserMW(),
+      correctUserMW(objRepo),
       updateUserMW(objRepo),
       renderMW('users/show')
     );
 
     router.get('/users/:id/bio/new',
       getUserByIdMW(objRepo),
-      correctUserMW(),
+      correctUserMW(objRepo),
       renderMW('users/bio_form')
     );
 
     router.post('/users/:id/bio',
       getUserByIdMW(objRepo),
-      correctUserMW(),
+      correctUserMW(objRepo),
       addBioMW(objRepo),
+      (req, res) => {
+        res.redirect('/users/' + res.locals.user.id)
+      }
+    );
+
+    router.patch('/users/:id/bio',
+      getUserByIdMW(objRepo),
+      correctUserMW(objRepo),
+      updateBioMW(objRepo),
       (req, res) => {
         res.redirect('/users/' + res.locals.user.id)
       }
@@ -139,7 +149,7 @@ const createRouter = (objRepo) => {
 
     router.delete('/users/:id',
       getUserByIdMW(objRepo),
-      correctUserMW(),
+      correctUserMW(objRepo),
       deleteUserMW(objRepo),
       saveDBMW(objRepo),
       (req, res) => {
@@ -151,6 +161,7 @@ const createRouter = (objRepo) => {
       getUserByIdMW(objRepo),
       upload.single('profile_img'),
       (req, res, next) => {
+        console.log(req.file)
         res.locals.user.profileData.img = req.file.path;
         console.log(res.locals);
         next();

@@ -1,9 +1,13 @@
 <%- include('../partials/header') %>
 
-<h2>Add a short bio to your profile</h2>
+<h2>
+  <%= user.profileData.bio ? "Edit your bio" : "Add a short bio to your profile" %>
+</h2>
 
-<form action="/users/<%= user.id %>/bio" method="POST">
-  <textarea name="bio" id="" cols="30" rows="10"></textarea>
+
+<form action="/users/<%= user.id %>/bio?_method=PATCH" method="POST">
+  <textarea name="bio" id="" cols="30" rows="10"><%= user.profileData.bio %>
+  </textarea>
   <button>Save bio</button>
 </form>
 

@@ -1,37 +1,37 @@
 <%- include('../partials/header') %>
 
 <h1><%= user.username %>'s Profile</h1>
-<p><%= user.profileData.img %></p>
-<% if (typeof user.profileData.img !== null) { %>
+<% if (user.profileData.img !== null) { %>
   <img src="/<%= user.profileData.img %>" alt="<%= user.username %>'s profile image" width="250">
-  <p><%= user.username %></p>
 <% } %>
 
+<p>
+  <%= user.profileData.bio ? user.profileData.bio : 'No bio yet' %>
+</p>
+  
+  <% if (correctUser) { %>
+    <% if (!user.profileData.bio) { %>
+      <a href="/users/<%= user.id %>/bio/new">Add a short bio</a>
+    <% } else { %>
+      <a href="/users/<%= user.id %>/bio/new">Edit bio</a>
+   <% } %>
 
-<% if (user.profileData.bio === null) { %>
-  <p>No bio for this user.</p>
-<% } else { %>
-  <p><%= user.profileData.bio %></p>
-<% } %>
+    <form action="/users/<%= user.id %>/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="profile_img" id="profile_img">
+      <input type="submit" value="Upload">
+    </form>
+    <!-- <a href="/users/<%= user.id %>/edit">Edit details</a><br> -->
+    <form action="/users/<%= user.id %>?_method=DELETE" method="POST">
+      <button>Delete profile</button>
+    </form>
+ <% } %> 
+
+
+
 
 <h3><%= user.username %>'s tweets</h3>
 <% tweets.forEach(tweet => { %>
   <p><%= tweet.text %></p>
 <% }) %>
-
-
-
-<% if (correctUser) { %>
-  <h2>Manage your profile</h2>
-  <form action="/users/<%= user.id %>/upload" method="POST" enctype="multipart/form-data">
-    <input type="file" name="profile_img" id="profile_img">
-    <input type="submit" value="Upload">
-  </form>
-  <a href="/users/<%= user.id %>/bio/new">Add a short bio</a>
-  <a href="/users/<%= user.id %>/edit">Edit details</a><br>
-  <form action="/users/<%= user.id %>?_method=DELETE" method="POST">
-    <button>Delete profile</button>
-  </form>
-<% } %>
 
 <%- include('../partials/footer') %>
