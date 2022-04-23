@@ -3,7 +3,7 @@
 
 <h1>Welcome to Twitter Light</h1>
 
-<% if (!loggedInUser) { %>
+<% if (typeof loggedInUser === 'undefined') { %>
   <a href="/users/new">Register new user</a>
   <a href="/login">Login here</a>
 
@@ -18,10 +18,10 @@
 
 <% users.forEach(user => { %>
   <p>
-    <% if (loggedInUser !== null) { %>
-      <a href="/users/<%= user.id %>"><%= user.username %></a>
-    <% } else { %>
+    <% if (typeof loggedInUser === 'undefined') { %>
       <%= user.username %>
+    <% } else { %>
+      <a href="/users/<%= user.id %>"><%= user.username %></a>
     <% } %>
   </p>
 <% }) %>
@@ -35,7 +35,7 @@
     Posted on: <%= new Date (tweet.createdAt).toLocaleString("hu-HU") %>
   </p>
 
-  <% if (loggedInUser && loggedInUser.id === tweet.user.id) { %>
+  <% if (typeof loggedInUser !== 'undefined' && loggedInUser.id === tweet.user.id) { %>
     <a href="/tweets/<%= tweet.id %>/edit">Edit</a>
     <form action="/tweets/<%= tweet.id %>?_method=DELETE" method="POST">
       <input type="submit" value="Delete" />

@@ -13,7 +13,7 @@ const createTweetMW = (objectRepo) => {
     }
 
     if (typeof res.locals.error !== 'undefined') {
-      return res.status(400).render('tweet_form', res.locals)
+      return res.status(400).render('tweets/tweet_form', res.locals)
     }
 
     const newTweet = {
@@ -22,8 +22,8 @@ const createTweetMW = (objectRepo) => {
       createdAt: new Date(),
       updatedAt: new Date(),
       user: {
-        id: res.locals.user.id,
-        username: res.locals.user.username,
+        id: res.locals.loggedInUser.id,
+        username: res.locals.loggedInUser.username,
       }
     }
 

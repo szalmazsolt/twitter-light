@@ -1,9 +1,12 @@
 const renderMW = (view) => {
   return (req, res) => {
     if (typeof req.session.userId === 'undefined') {
-      res.locals.loggedInUser = null;
+      console.log('Session id:' ,req.session.userId)
+      res.locals.loggedInUser = undefined;
+      // console.log('Logged In user:', loggedInUser)
+      console.log('user:', res.locals.user)
     }
-    res.status(200).render(view, res.locals)
+    return res.status(200).render(view, res.locals)
   };
 };
 

@@ -1,4 +1,6 @@
-const correctUserMW = (constinueMwFlow=false) => {
+const correctUserMW = (options={ continueMwFlow: false}) => {
+
+  const { continueMwFlow } = options;
 
   return (req, res, next) => {
 
@@ -6,7 +8,7 @@ const correctUserMW = (constinueMwFlow=false) => {
     if (req.session.userId !== res.locals.user.id) {
       res.locals.correctUser = false;
 
-      if (constinueMwFlow) {
+      if (continueMwFlow) {
         return next();
       } else {
         return res.status(401).render('error');
@@ -14,6 +16,7 @@ const correctUserMW = (constinueMwFlow=false) => {
 
     }
 
+    res.locals.loggedInUser = res.locals.user
     res.locals.correctUser = true;
     next();
   };

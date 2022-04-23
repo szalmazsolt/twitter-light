@@ -5,8 +5,8 @@ const getUserMW = (objectRepo) => {
   return (req, res, next) => {
     const user = userModel.findOne({ id: req.session.userId });
 
-    res.locals.user = user;
-
+    res.locals.loggedInUser = user;
+    console.log(res.locals.loggedInUser)
     next();
   };
 };

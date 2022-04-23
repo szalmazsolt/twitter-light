@@ -15,7 +15,7 @@ const setupSignupErrorsMW = () => {
     };
 
     res.locals.errorMessages = errorMessages;
-    res.locals.userData = userData; 
+    res.locals.userData = userData;
 
     next();
   };

@@ -60,7 +60,7 @@ const objectRepo = {
   userModel: null,
   uuidv4,
   router,
-  upload
+  upload,
 };
 
 

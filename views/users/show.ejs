@@ -1,17 +1,17 @@
 <%- include('../partials/header') %>
 
 <h1><%= user.username %>'s Profile</h1>
-
-<% if (typeof user.profile_img !== 'undefined') { %>
-  <img src="/<%= user.profile_img %>" alt="<%= user.username %>'s profile image" width="250">
+<p><%= user.profileData.img %></p>
+<% if (typeof user.profileData.img !== null) { %>
+  <img src="/<%= user.profileData.img %>" alt="<%= user.username %>'s profile image" width="250">
   <p><%= user.username %></p>
 <% } %>
 
 
-<% if (typeof user.bio === 'undefined') { %>
+<% if (user.profileData.bio === null) { %>
   <p>No bio for this user.</p>
 <% } else { %>
-  <p><%= user.bio %></p>
+  <p><%= user.profileData.bio %></p>
 <% } %>
 
 <h3><%= user.username %>'s tweets</h3>

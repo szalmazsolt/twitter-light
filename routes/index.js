@@ -39,8 +39,8 @@ const createRouter = (objRepo) => {
 
     // New tweet
     router.get('/tweets/new',
-      authMW(),
-      renderMW('tweet_form')
+      authMW(objRepo),
+      renderMW('tweets/tweet_form')
     );
     
     // Create tweet
@@ -104,7 +104,7 @@ const createRouter = (objRepo) => {
 
     router.get('/users/:id',
       getUserByIdMW(objRepo),
-      correctUserMW(true),
+      correctUserMW({ continueMwFlow: true }),
       getTweetsByUserMW(objRepo),
       renderMW('users/show')
     );
@@ -151,7 +151,7 @@ const createRouter = (objRepo) => {
       getUserByIdMW(objRepo),
       upload.single('profile_img'),
       (req, res, next) => {
-        res.locals.user.profile_img = req.file.path;
+        res.locals.user.profileData.img = req.file.path;
         console.log(res.locals);
         next();
       },

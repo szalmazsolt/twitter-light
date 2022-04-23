@@ -4,6 +4,7 @@ const validateUserDataMW = (objectRepo) => {
 
   return (req, res, next) => {
       console.log('validateUserDataMW runs...')
+      console.log(res.locals.loggedInUser)
       
       res.locals.userData = {
         username: req.body.username.trim(),
