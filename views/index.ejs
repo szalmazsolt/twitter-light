@@ -6,10 +6,7 @@
 <% if (typeof loggedInUser === 'undefined') { %>
   <a href="/users/new">Register new user</a>
   <a href="/login">Login here</a>
-
 <% } else { %>
-  <p>Current user is <%= loggedInUser.username %></p>
-  <a href="/logout">Logout</a>
   <p><a href="/tweets/new">Start tweeting</a></p>
 <% } %>
 
@@ -19,9 +16,15 @@
 <% users.forEach(user => { %>
   <p>
     <% if (typeof loggedInUser === 'undefined') { %>
-      <%= user.username %>
+      <p>
+        <%= user.username %>
+        Joined on: <%= new Date(user.createdAt).toLocaleString() %>
+      </p>
     <% } else { %>
-      <a href="/users/<%= user.id %>"><%= user.username %></a>
+      <p>
+        <a href="/users/<%= user.id %>"><%= user.username %></a>
+        Joined on: <%= new Date(user.createdAt).toLocaleString("hu-HU") %>
+      </p>
     <% } %>
   </p>
 <% }) %>

@@ -57,7 +57,7 @@ const createRouter = (objRepo) => {
     router.get('/tweets/:id/edit',
       getTweetMW(objRepo),
       correctTweetUserMW(),
-      renderMW('edit_tweet_form')
+      renderMW('tweets/edit_tweet_form')
     );
     
     // Update tweet

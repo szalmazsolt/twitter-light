@@ -7,10 +7,14 @@ const correctUserMW = (objectRepo, options={ continueMwFlow: false}) => {
 
     const user = userModel.findOne({ id: req.session.userId });
 
-    res.locals.loggedInUser = user;
+    if (user === null) {
+      res.locals.error = 'You have to be logged in';
+      return res.status(401).render('error', res.locals)
+    }
 
+    res.locals.loggedInUser = user;
     // Check if the currently logged in user is the same user whose data we are trying to access 
-    if (req.session.userId !== res.locals.user.id) {
+    if (res.locals.loggedInUser.id !== res.locals.user.id) {
       res.locals.correctUser = false;
 
       if (continueMwFlow) {
