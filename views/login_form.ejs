@@ -1,16 +1,30 @@
 <%- include('partials/header')  %>
+
+<h2 class="mb-4 display-4">Login</h2>
   
 <form action="/login" method="POST">
   <% if (typeof error !== 'undefined') { %>
-    <p><%= error %></p>
+    <p class="text-danger"><%= error %></p>
   <% } %>
-  <label for="email">Email:</label>
-  <input type="text" name="email" id="email" value="<%= typeof email === 'undefined' ? '' : email %>">
+  
+  <div class="row">
+    <div class="col">
+      <input class="form-control" type="text" name="email" id="email" value="<%= typeof email === 'undefined' ? '' : email %>" placeholder="Email">
+    </div>
+    <div class="col">
+      <input class="form-control" type="password" name="password" id="password" placeholder="Password">
+    </div>
+    <div class="col">
+      <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+  </div>
+  
+  
 
-  <label for="password">Password</label>
-  <input type="password" name="password" id="password">
-
-  <button>Login</button>
+  
 </form>
+
+
+
 
 <%- include('partials/footer') %>

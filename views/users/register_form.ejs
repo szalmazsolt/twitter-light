@@ -1,32 +1,49 @@
 <%- include('../partials/header') %>
   
-<form action="/users" method="POST">
+<div class="container">
 
-  <label for="username">Username:</label>
-  <input type="text" name="username" id="username" value="<%= userData.username !== '' ? userData.username : '' %>">
-  <div>
-    <%= errorMessages.username %>
-  </div>
+  <h2 class="mb-3 display-4">Register to Start Tweeting</h2>
+  <form action="/users" method="POST" class="p-5" style="max-width:800px;background:#eee;">
 
-  <label for="email">Email:</label>
-  <input type="text" name="email" id="email" value="<%= userData.email !== '' ? userData.email : '' %>">
-  <div>
-    <%= errorMessages.email %>
-  </div>
+    <div class="mb-3">
+      <label for="username" class=""form-label>Username</label>
+      <input class="form-control" type="text" name="username" id="username" value="<%= userData.username !== '' ? userData.username : '' %>">
+      <div class="text-danger">
+        <%= errorMessages.username %>
+      </div>
+    </div>
+    
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input class="form-control" type="text" name="email" id="email" value="<%= userData.email !== '' ? userData.email : '' %>">
+      <div class="text-danger">
+        <%= errorMessages.email %>
+      </div>
+    </div>
+    
+    <div class="mb-3">
+      <label for="password" class="form-label">Password:</label>
+      <input class="form-control" type="password" name="password" id="password" value="">
+      <div class="text-danger">
+        <%= errorMessages.password %>
+      </div>
+    </div>
+    
+    <div class="mb-3">
+      <label for="password_confirmation" class="form-label">Re-type password:</label>
+      <input class="form-control" type="password" name="password_confirmation" id="password_confirmation" value="">
+      <div class="text-danger">
+        <%= errorMessages.password %>
+      </div>
+    </div>
+    
+    <div class="mb-2">
+      <button type="submit" class="btn btn-primary btn-lg">Register</button>
+    </div>
 
-  <label for="password">Password:</label>
-  <input type="password" name="password" id="password" value="">
-  <div>
-    <%= errorMessages.password %>
-  </div>
+  </form>
 
-  <label for="password_confirmation">Re-type password:</label>
-  <input type="password" name="password_confirmation" id="password_confirmation" value="">
-  <div>
-    <%= errorMessages.password %>
-  </div>
+</div>
 
-  <button>Register</button>
-</form>
 
 <%- include('../partials/footer') %>
