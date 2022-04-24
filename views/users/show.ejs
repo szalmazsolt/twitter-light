@@ -1,53 +1,83 @@
 <%- include('../partials/header') %>
 
-<h1><%= user.username %>'s Profile</h1>
-<% if (user.profileData.img !== null) { %>
-  <img src="/<%= user.profileData.img %>" alt="<%= user.username %>'s profile image" width="250">
-<% } %>
+<div class="container">
 
-<p>
-  <%= user.profileData.bio ? user.profileData.bio : 'No bio yet' %>
-</p>
-  
-  <% if (correctUser) { %>
-    <% if (!user.profileData.bio) { %>
-      <a href="/users/<%= user.id %>/bio/new">Add a short bio</a>
-    <% } else { %>
-      <a href="/users/<%= user.id %>/bio/new">Edit bio</a>
-   <% } %>
+  <div class="row">
 
-    <form action="/users/<%= user.id %>/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" name="profile_img" id="profile_img">
-      <input type="submit" value="Upload">
-    </form>
-    <!-- <a href="/users/<%= user.id %>/edit">Edit details</a><br> -->
-    <form action="/users/<%= user.id %>?_method=DELETE" method="POST">
-      <button>Delete profile</button>
-    </form>
- <% } %> 
+    <div class="col-7">
+      <h1 class="display-3"><%= user.username %>'s Profile</h1>
+  <% if (user.profileData.img !== null) { %>
+    <img src="/<%= user.profileData.img %>" alt="<%= user.username %>'s profile image" width="250">
+  <% } %>
 
+  <p class="mt-3 mb-1">
+    <%= user.profileData.bio ? user.profileData.bio : 'No bio yet' %>
 
-<% if (correctUser) { %>
-  <h3><%= tweets.length > 0 ? 'Your tweets' : 'No tweets yet' %></h3>
-  <% tweets.forEach(tweet => { %>
-    <p>
-      <%= tweet.text %>
-      <%= tweet.updatedAt > tweet.createdAt ? 'Updated on' : 'Created on' %>
-       <%= new Date(tweet.updatedAt).toLocaleString("hu-HU") %>
-      <a href="/tweets/<%= tweet.id %>/edit">Edit</a>
-      <form action="/tweets/<%= tweet.id %>?_method=DELETE" method="POST">
-      <input type="submit" value="Delete" />
+    <% if (correctUser) { %>
+      <% if (!user.profileData.bio) { %>
+        <p class="mt-1">
+          <a class="btn btn-primary btn-sm mx-3" href="/users/<%= user.id %>/bio/new">Add a short bio</a>
+        </p>
+      <% } else { %>
+        <p class="mt-1">
+          <a class="btn btn-warning btn-sm" href="/users/<%= user.id %>/bio/new">Edit bio</a>
+        </p>
+    <% } %>
+
+    <p>Upload or change your profile image</p>
+      <form action="/users/<%= user.id %>/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="profile_img" id="profile_img">
+        <input class="btn btn-primary btn-sm" type="submit" value="Upload">
       </form>
-    </p>
-  <% }) %>
-<% } else { %>
-  <h3><%= user.username %>'s tweets</h3>
-  <% tweets.forEach(tweet => { %>
-    <p>
-      <%= tweet.text %>
-    </p>
-  <% }) %>
-<% } %>
+      <!-- <a href="/users/<%= user.id %>/edit">Edit details</a><br> -->
+      <p class="text-danger mt-4 mb-1">
+        <strong>
+          Danger Zone
+        </strong>
+      </p>
+      <form action="/users/<%= user.id %>?_method=DELETE" method="POST">
+        <button type="submit" class="btn btn-danger">Delete profile</button>
+      </form>
+    <% } %> 
+  </p>
+</div>
+
+    <div class="col-5">
+      <% if (correctUser) { %>
+        <h3 class="display-5"><%= tweets.length > 0 ? 'Manage Your Tweets' : 'No tweets yet' %></h3>
+        <% tweets.forEach(tweet => { %>
+          <p class="mb-1">
+            <%= tweet.text %>
+          </p>
+          <p class="text-muted small mb-1">
+            <%= tweet.updatedAt > tweet.createdAt ? 'Updated on' : 'Created on' %>
+             <%= new Date(tweet.updatedAt).toLocaleString("hu-HU") %>
+          </p>
+            <a class="btn btn-warning btn-sm" href="/tweets/<%= tweet.id %>/edit">Edit</a>
+            <form class="d-inline" action="/tweets/<%= tweet.id %>?_method=DELETE" method="POST">
+            <input class="btn btn-danger btn-sm" type="submit" value="Delete" />
+            </form>
+          </p>
+        <% }) %>
+      <% } else { %>
+        <h3><%= user.username %>'s tweets</h3>
+        <% tweets.forEach(tweet => { %>
+          <p>
+            <%= tweet.text %>
+          </p>
+        <% }) %>
+      <% } %>
+    </div>
+</div>
+
+  
+
+
+
+
+
+
+
 
 
 

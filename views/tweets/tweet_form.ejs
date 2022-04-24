@@ -1,9 +1,16 @@
 <%- include('../partials/header') %>
 
+
 <form action="/tweets" method="POST">
-  <input type="text" name="tweet" id="tweet" placeholder="What do you wanna say?" value="<%= typeof tweet !== 'undefined' ? tweet : '' %>">
-  <div><%= typeof error !== 'undefined' ? error : '' %></div>
-  <button>Go</button>
+  <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label">Speak Your Mind (144 chars)</label>
+    <textarea class="form-control" name="tweet" rows="3" autofocus>
+      <%= typeof tweet !== 'undefined' ? tweet : '' %>
+    </textarea>
+    <div class="text-danger mt-2"><%= typeof error !== 'undefined' ? error : '' %></div>
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-lg">Go</button>
 </form>
 
 <%- include('../partials/footer') %>

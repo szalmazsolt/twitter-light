@@ -21,23 +21,30 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/">Home</a>
           </li>
+          </ul>
+
+
           <% if (typeof loggedInUser === 'undefined') { %>
-            <li class="nav-item">
-              <a class="nav-link" href="/users/new">Register</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
-            </li>      
-          <% } else { %>
-            <li class="nav-item">
-              Hello, <a class="nav-link" href="/users/<%= loggedInUser.id %>"><%= loggedInUser.username %></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/tweets/new">Start tweeting</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
-            </li>
+            <ul class="navbar-nav d-flex">
+              <li class="nav-item">
+                <a class="nav-link" href="/users/new">Register</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+              </li>
+            </ul>    
+            <% } else { %>
+              <ul class="navbar-nav d-flex">
+              <li class="nav-item">
+                Hello, <a class="nav-link" href="/users/<%= loggedInUser.id %>"><%= loggedInUser.username %></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/tweets/new">Start tweeting</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+              </li>
+            </ul>
           <% } %>
  
         </ul>
