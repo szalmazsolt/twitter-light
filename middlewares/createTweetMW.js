@@ -19,8 +19,8 @@ const createTweetMW = (objectRepo) => {
     const newTweet = {
       id: uuidv4(),
       text: tweet,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
       user: {
         id: res.locals.loggedInUser.id,
         username: res.locals.loggedInUser.username,
