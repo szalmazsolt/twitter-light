@@ -24,13 +24,13 @@
         </p>
     <% } %>
 
-    <p>Upload or change your profile image</p>
+    <p class="lead">Upload or change your profile image</p>
       <form action="/users/<%= user.id %>/upload" method="POST" enctype="multipart/form-data">
         <input type="file" name="profile_img" id="profile_img">
         <input class="btn btn-primary btn-sm" type="submit" value="Upload">
       </form>
       <!-- <a href="/users/<%= user.id %>/edit">Edit details</a><br> -->
-      <p class="text-danger mt-4 mb-1">
+      <p class="text-danger mt-4 mb-1 lead">
         <strong>
           Danger Zone
         </strong>
